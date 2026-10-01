@@ -1,0 +1,136 @@
+name,value,unit,sheet,description,expression
+c_pop,14184,people,Scale,"Residents, 13 municipalities",NODE_SUM(pop)
+c_it_mw,63.96,MW,Scale,"Continuous IT load, 11 nodes",NODE_SUM(mw)
+c_area_km2,1035.3799999999999,km2,Scale,"Municipal area, 13 municipalities",NODE_SUM(area)
+c_hh,5998.0,households,Scale,"Households, scaled","ROUND(p_hh_src/p_pop_src*c_pop,0)"
+c_dh_hh,4934.0,households,Scale,Households on district heating,"ROUND(p_dh_src/p_hh_src*c_hh,0)"
+c_nondh_hh,1064.0,households,Scale,Households off district heating,c_hh-c_dh_hh
+c_veh,6996.0,vehicles,Scale,Vehicles,"ROUND(p_veh_src/p_pop_src*c_pop,0)"
+c_area_scale,0.5358832358573572,ratio,Scale,Corridor/comarca area ratio (livestock and farmland proxy),c_area_km2/p_comarca_area_km2
+c_heat_useful_gwh,108.2639,GWh,Energy,"Useful space heat, all households",c_hh*p_heat_hh/1000000
+c_dh_useful_gwh,89.0587,GWh,Energy,Useful heat from recovered data-centre heat,c_dh_hh*p_heat_hh/1000000
+c_nondh_useful_gwh,19.2052,GWh,Energy,Useful heat off the heat network,c_nondh_hh*p_heat_hh/1000000
+c_cook_useful_gwh,8.997,GWh,Energy,Useful cooking energy,c_hh*p_cook_hh/1000000
+c_cook_fuel_gwh,9.996666666666666,GWh,Energy,Cooking gas demand if all on gas,c_cook_useful_gwh/p_eff_cook
+c_hh_elec_gwh,16.3841368,GWh,Energy,Household electricity,c_hh*p_elec_hh/1000000
+c_veh_km,83952000.0,vehicle-km,Energy,Annual vehicle-km,c_veh*p_km_veh
+c_ev_elec_gwh,15.95759616,GWh,Energy,Free charging electricity,c_veh_km*(p_bev_share+p_phev_share*p_phev_efrac)*p_bev_kwh_km*(1+p_charge_loss)/1000000
+c_phev_fuel_l,251856.0,L,Energy,"Renewable gasoline, PHEV engine km",c_veh_km*p_phev_share*(1-p_phev_efrac)*p_l100/100
+c_bus_elec_gwh,0.325,GWh,Energy,Electric bus,p_bus_km*p_bus_kwh_km/1000000
+c_cult_ha,27187.50008798716,ha,Energy,"Cultivated area, area-scaled",p_comarca_cult_ha*c_area_scale
+c_farm_diesel_l,2175000.007038973,L,Energy,Farm machinery fuel,c_cult_ha*p_diesel_l_ha
+c_farm_energy_gwh,21.689100070192634,GWh,Energy,Farm machinery fuel energy,c_farm_diesel_l*p_diesel_kwh_l/1000000
+c_bread_t,575.808,t,Energy,Bread,c_hh*p_bread_kg_hh/1000
+c_food_elec_gwh,43.5175,GWh,Energy,Aquaculture and glasshouse electricity,(p_seafood_t*p_ras_kwh_kg*1000+p_glass_ha*10000*p_glass_kwh_m2)/1000000
+c_it_gwh,560.2896,GWh,Compute,IT energy,c_it_mw*8.76
+c_dc_gwh,644.3330399999999,GWh,Compute,"Facility electricity, distributed",c_it_gwh*p_pue
+c_net_gwh,5.602895999999999,GWh,Compute,Inter-site network electricity,c_it_gwh*p_net_frac
+c_recoverable_gwh,493.05484799999994,GWh,Compute,Recoverable heat at the liquid loop,c_it_gwh*p_heat_recovery
+c_dh_lift_gwh,12.648414591439689,GWh,Compute,District-heating lift electricity,c_dh_useful_gwh*p_dh_lift_share
+c_dh_pump_gwh,1.3358805,GWh,Compute,District-heating pumping electricity,c_dh_useful_gwh*p_dh_pump
+c_glass_heat_gwh,54.01627615062762,GWh,Compute,Glasshouse heat,p_glass_ha*p_glass_gwh_ha
+c_ras_heat_gwh,93.4187721691678,GWh,Compute,Aquaculture heat,p_seafood_t*p_ras_mwh_t/1000
+c_proving_gwh,0.1151616,GWh,Compute,Bread proving heat,c_bread_t*p_proving_kwh_kg/1000
+c_dry_total_gwh,116.89999999999999,GWh,Compute,Drying heat delivered,p_dry_alf_gwh+p_dry_other_gwh
+c_dry_alf_lift_gwh,10.61840889649273,GWh,Compute,"Drying lift, alfalfa share",p_dry_lift_gwh*p_dry_alf_gwh/c_dry_total_gwh
+c_dry_other_lift_gwh,4.98159110350727,GWh,Compute,"Drying lift, other line",p_dry_lift_gwh-c_dry_alf_lift_gwh
+c_heat_used_gwh,353.50890991979537,GWh,Compute,Heat delivered to productive sinks,c_dh_useful_gwh+c_glass_heat_gwh+c_ras_heat_gwh+c_proving_gwh+c_dry_total_gwh
+c_heat_from_loop_gwh,325.26049532835566,GWh,Compute,Of which drawn from the liquid loop,c_heat_used_gwh-c_dh_lift_gwh-p_dry_lift_gwh
+c_heat_rejected_gwh,167.79435267164428,GWh,Compute,Recoverable heat rejected,c_recoverable_gwh-c_heat_from_loop_gwh
+c_erf,0.48360015446149274,fraction,Compute,Energy reuse factor (EN 50600-4-6 style),c_heat_from_loop_gwh/(c_dc_gwh+c_dh_lift_gwh+p_dry_lift_gwh)
+c_cattle,1500.4730604006002,head,Livestock,Cattle,p_cattle_comarca*c_area_scale
+c_sheep,48765.37446301951,head,Livestock,Sheep,p_sheep_comarca*c_area_scale
+c_pigs,100210.1651053258,head,Livestock,Pigs,p_pigs_comarca*c_area_scale
+c_goats,414.2377413177371,head,Livestock,Goats,p_goats_comarca*c_area_scale
+c_ent_ch4_t,628.0363965115677,t CH4,Livestock,Enteric CH4,(c_cattle*p_ent_cattle+c_sheep*p_ent_sheep+c_goats*p_ent_goat+c_pigs*p_ent_pig)/1000
+c_man_ch4_t,619.5831010487033,t CH4,Livestock,Manure CH4,(c_cattle*p_man_cattle+c_sheep*p_man_sheep+c_goats*p_man_goat+c_pigs*p_man_pig)/1000
+c_additive_ch4_t,0.0,t CH4,Livestock,Enteric CH4 avoided by feed additive,c_cattle*p_ent_cattle*p_cattle_fed_share*p_additive_eff/1000
+c_digest_ch4_t,545.186168831841,t CH4,Livestock,Reference manure-storage CH4 avoided by routing collectable pig slurry and housed cattle manure promptly to the gas-tight digester,(c_pigs*p_man_pig*p_slurry_collect+c_cattle*p_man_cattle*p_cattle_manure_collect)*p_digest_avoid/1000
+c_biogas_ch4_m3,3039606.773792247,m3 CH4,Livestock,Gross methane produced from routed pig slurry and collectable cattle manure,(c_pigs*p_slurry_collect*p_pig_vs*p_pig_b0+c_cattle*p_cattle_manure_collect*p_cattle_vs*p_cattle_b0)*365*p_digester_yield
+c_biomethane_gwh,30.3048795347087,GWh,Livestock,Biomethane energy,c_biogas_ch4_m3*p_ch4_kwh_m3/1000000
+c_leak_ch4_t,65.38194170427121,t CH4,Livestock,"Additional methane slip from upgrading, compression and piping beyond the digester-management factor",c_biogas_ch4_m3*p_ch4_kg_m3*p_leak/1000
+c_slurry_pig_t,130273.21463692354,t/yr,Livestock logistics,Pig slurry hauled to central digester,c_pigs*p_slurry_collect*p_pig_slurry_t_head_yr
+c_slurry_cattle_t,5476.726670462191,t/yr,Livestock logistics,Collectable cattle manure hauled to central digester,c_cattle*p_cattle_manure_collect*p_cattle_manure_t_head_yr
+c_slurry_truck_t,135749.94130738574,t/yr,Livestock logistics,Total wet manure transported,c_slurry_pig_t+c_slurry_cattle_t
+c_slurry_truck_ef,0.01554655870445344,kgCO2e/t-km,Livestock logistics,Truck factor scaled from fossil freight to the modelled renewable-diesel lifecycle intensity,p_truck_kg_tkm*(p_ef_hvo/(p_ef_oil*p_wtt_oil))
+c_slurry_truck_tco2,84.41777726645525,tCO2e,Livestock logistics,Round-trip slurry/manure transport to central digester,c_slurry_truck_t*(2*p_slurry_haul_oneway_km)*c_slurry_truck_ef/1000
+c_bio_cook_gwh,9.996666666666666,GWh,Biogas,Biomethane to cooking,"MIN(c_biomethane_gwh,c_cook_fuel_gwh)"
+c_bio_farm_gwh,6.50673002105779,GWh,Biogas,Biomethane to farm machinery,"MIN(c_biomethane_gwh-c_bio_cook_gwh,c_farm_energy_gwh*p_bio_tractor_cap)"
+c_bio_heat_gwh,13.801482846984243,GWh,Biogas,Biomethane to off-network heating,"MIN(c_biomethane_gwh-c_bio_cook_gwh-c_bio_farm_gwh,c_nondh_useful_gwh/p_eff_ng)"
+c_bio_surplus_gwh,0.0,GWh,Biogas,Surplus biomethane (no credit),c_biomethane_gwh-c_bio_cook_gwh-c_bio_farm_gwh-c_bio_heat_gwh
+c_cook_elec_gwh,0.0,GWh,Biogas,Induction cooking for the remainder,(c_cook_useful_gwh-c_bio_cook_gwh*p_eff_cook)/p_eff_induction
+c_farm_hvo_gwh,15.182370049134843,GWh,Biogas,Renewable diesel to farm machinery,c_farm_energy_gwh-c_bio_farm_gwh
+c_heat_hvo_gwh,7.981018162016685,GWh,Biogas,Renewable heating oil off the heat network,(c_nondh_useful_gwh-c_bio_heat_gwh*p_eff_ng)/p_eff_oil
+c_elec_hh_side_gwh,32.666732960000004,GWh,Electricity,Community electricity,c_hh_elec_gwh+c_ev_elec_gwh+c_bus_elec_gwh+c_cook_elec_gwh
+c_elec_food_gwh,43.5175,GWh,Electricity,Food-production electricity,c_food_elec_gwh
+c_elec_heatnet_gwh,29.58429509143969,GWh,Electricity,Heat-network electricity,c_dh_lift_gwh+c_dh_pump_gwh+p_dry_lift_gwh
+c_elec_total_gwh,755.7044640514396,GWh,Electricity,Total project electricity,c_elec_hh_side_gwh+c_elec_food_gwh+c_elec_heatnet_gwh+c_dc_gwh+c_net_gwh
+c_own_gen_gwh,533.6561835478454,GWh,Electricity,Own wind and solar,c_it_mw*(p_wind_per_it*p_wind_cf+p_solar_per_it*p_solar_cf)*8.76
+c_own_used_gwh,533.6561835478454,GWh,Electricity,Own generation used,"MIN(c_own_gen_gwh,c_elec_total_gwh)"
+c_ppa_gwh,222.04828050359413,GWh,Electricity,Residual renewable PPA,c_elec_total_gwh-c_own_used_gwh
+c_own_share,0.7061704792463954,fraction,Electricity,Own-generation share,c_own_used_gwh/c_elec_total_gwh
+c_ef_proj_mb,0.02,kgCO2e/kWh,Electricity,"Project intensity, market-based",(c_own_used_gwh*p_ef_own+c_ppa_gwh*p_ef_ppa)/c_elec_total_gwh
+c_ef_proj_lb,0.07729675654695291,kgCO2e/kWh,Electricity,"Project intensity, location-based",(c_own_used_gwh*p_ef_own+c_ppa_gwh*p_ef_grid_lb)/c_elec_total_gwh
+R_elec,4227.107294400001,tCO2e,Emissions,Household electricity — reference,c_hh_elec_gwh*p_ef_grid_mb*1000
+J_elec,327.68273600000003,tCO2e,Emissions,Household electricity — project,c_hh_elec_gwh*c_ef_proj_mb*1000
+R_heat,34870.90041539765,tCO2e,Emissions,Space heating — reference,c_heat_useful_gwh*1000*(p_mix_oil*p_ef_oil*p_wtt_oil/p_eff_oil+p_mix_lpg*p_ef_lpg*p_wtt_lpg/p_eff_lpg+p_mix_ng*p_ef_ng*p_wtt_ng/p_eff_ng+p_mix_bio*p_ef_biomass/p_eff_bio)
+J_heat_dh,279.68590182879376,tCO2e,Emissions,Space heating from recovered heat — project,(c_dh_lift_gwh+c_dh_pump_gwh)*c_ef_proj_mb*1000
+J_heat_off,597.7214746020035,tCO2e,Emissions,"Space heating off network (biomethane, renewable heating oil) — project",(c_bio_heat_gwh*p_ef_biomethane+c_heat_hvo_gwh*p_ef_hvo)*1000
+R_cook,2505.7148832,tCO2e,Emissions,Cooking — reference,c_cook_fuel_gwh*1000*(p_cook_mix_lpg*p_ef_lpg*p_wtt_lpg+(1-p_cook_mix_lpg)*p_ef_ng*p_wtt_ng)
+J_cook,99.96666666666667,tCO2e,Emissions,Cooking — project,(c_bio_cook_gwh*p_ef_biomethane+c_cook_elec_gwh*c_ef_proj_mb)*1000
+R_mob,18472.0635,tCO2e,Emissions,Private mobility — reference,c_veh_km*p_l100/100*p_gasoline_kg_l*p_wtt_gasoline/1000
+J_mob,526.4352221130434,tCO2e,Emissions,Mobility incl. free charging and bus — project,(c_ev_elec_gwh+c_bus_elec_gwh)*c_ef_proj_mb*1000+c_phev_fuel_l*p_gasoline_kg_l*p_wtt_gasoline*p_rgas_ratio/1000
+R_farm,7232.230418405735,tCO2e,Emissions,Farm machinery — reference (gasóleo B),c_farm_energy_gwh*p_ef_oil*p_wtt_oil*1000
+J_farm,939.5718150407448,tCO2e,Emissions,Farm machinery — project,(c_bio_farm_gwh*p_ef_biomethane+c_farm_hvo_gwh*p_ef_hvo)*1000
+R_ent,16956.982705812326,tCO2e,Emissions,Enteric methane — reference,c_ent_ch4_t*p_gwp_ch4
+J_ent,16956.982705812326,tCO2e,Emissions,Enteric methane — project,(c_ent_ch4_t-c_additive_ch4_t)*p_gwp_ch4
+R_man,16728.74372831499,tCO2e,Emissions,Manure methane — reference,c_man_ch4_t*p_gwp_ch4
+J_man,3774.0295958706047,tCO2e,Emissions,Manure methane — project: unmanaged/pasture manure plus residual managed-manure emissions and biomethane-chain leakage,(c_man_ch4_t-c_digest_ch4_t+c_leak_ch4_t)*p_gwp_ch4
+J_slurry_transport,84.41777726645525,tCO2e,Emissions,Renewable-fuel trucking of slurry/manure to the central digester,c_slurry_truck_tco2
+R_compute,12886.660799999998,tCO2e,Emissions,"Compute — mega-campus, same procurement",c_it_gwh*p_pue_campus*c_ef_proj_mb*1000
+J_compute,12998.718719999997,tCO2e,Emissions,Compute — distributed network,(c_dc_gwh+c_net_gwh)*c_ef_proj_mb*1000
+R_dry,17038.26992,tCO2e,Emissions,Alfalfa dehydration — reference gas-fired,p_alf_water_t*p_dryer_mj_kg/3600*p_ef_ng*p_wtt_ng*1000
+J_dry,212.3681779298546,tCO2e,Emissions,Alfalfa dehydration with recovered heat — project,c_dry_alf_lift_gwh*c_ef_proj_mb*1000
+J_dry_other,99.63182207014542,tCO2e,Emissions,Other drying line lift (no reference credit),c_dry_other_lift_gwh*c_ef_proj_mb*1000
+c_alf_product_t,47201,t,Emissions,Dehydrated alfalfa output,p_alf_wet_t-p_alf_water_t
+R_haul,1274.427,tCO2e,Emissions,Alfalfa haulage — reference,c_alf_product_t*p_haul_ref_km*p_truck_kg_tkm/1000
+J_haul,127.4427,tCO2e,Emissions,Alfalfa haulage — project,c_alf_product_t*p_haul_proj_km*p_truck_kg_tkm/1000
+c_sbm_t,383.3708669323533,t,Emissions,Soybean meal displaced,c_cattle*p_cattle_fed_share*p_sbm_kg_day*365/1000
+R_feed,575.05630039853,tCO2e,Emissions,Protein feed — reference soybean meal,c_sbm_t*p_ef_sbm
+J_feed,103.5101340717354,tCO2e,Emissions,Protein feed — local alfalfa,c_sbm_t*p_alf_per_sbm*p_ef_alf
+c_veg_t,19300.5,t,Emissions,Glasshouse vegetables,p_glass_ha*10000*p_yield_kg_m2/1000
+R_veg,13510.349999999999,tCO2e,Emissions,Vegetables — reference supply,c_veg_t*p_ef_veg_ref
+J_veg,5039.575,tCO2e,Emissions,Vegetables — corridor glasshouse,c_veg_t*p_ef_veg_proj+p_glass_ha*10000*p_glass_kwh_m2/1000000*c_ef_proj_mb*1000
+R_sea,65590.0,tCO2e,Emissions,Seafood — reference supply,p_seafood_t*p_ef_sea_ref
+J_sea,20332.9,tCO2e,Emissions,Seafood — corridor RAS,p_seafood_t*p_ef_sea_proj+p_seafood_t*p_ras_kwh_kg/1000*c_ef_proj_mb*1000
+R_bread,575.808,tCO2e,Emissions,Bread — reference,c_bread_t*p_ef_bread_ref
+J_bread,287.904,tCO2e,Emissions,Bread — project,c_bread_t*p_ef_bread_proj
+R_beef,3319.056,tCO2e,Emissions,Residents' beef — reference,c_pop*p_beef_kg_pc*p_ef_beef/1000
+J_beef,2182.27932,tCO2e,Emissions,Residents' beef — project,R_beef*(1-p_beef_red)
+R_cheese,2433.9744,tCO2e,Emissions,Residents' cheese — reference,c_pop*p_cheese_kg_pc*p_ef_cheese/1000
+J_cheese,1125.71316,tCO2e,Emissions,Residents' cheese — project,R_cheese*(1-p_cheese_red)
+R_A,113880.40374553068,tCO2e,Totals,Boundary A territorial — reference,R_elec+R_heat+R_cook+R_mob+R_farm+R_ent+R_man+R_compute
+J_A,36585.21261520064,tCO2e,Totals,Boundary A territorial — project,J_elec+J_heat_dh+J_heat_off+J_cook+J_mob+J_farm+J_ent+J_man+J_slurry_transport+J_compute
+R_B,104316.94162039853,tCO2e,Totals,Boundary B value chain — reference,R_dry+R_haul+R_feed+R_veg+R_sea+R_bread+R_beef+R_cheese
+J_B,29511.324314071735,tCO2e,Totals,Boundary B value chain — project,J_dry+J_dry_other+J_haul+J_feed+J_veg+J_sea+J_bread+J_beef+J_cheese
+R_AB,218197.3453659292,tCO2e,Totals,A+B — reference,R_A+R_B
+J_AB,66096.53692927238,tCO2e,Totals,A+B — project,J_A+J_B
+red_A,0.6787400517392664,fraction,Totals,"Reduction, territorial",1-J_A/R_A
+red_B,0.7170994101661721,fraction,Totals,"Reduction, value chain",1-J_B/R_B
+red_AB,0.6970790968220775,fraction,Totals,"Reduction, A+B",1-J_AB/R_AB
+R_A_ex_compute,100993.74294553068,tCO2e,Totals,Territorial excluding compute — reference,R_A-R_compute
+J_A_ex_compute,23586.49389520064,tCO2e,Totals,Territorial excluding compute — project,J_A-J_compute
+red_A_ex_compute,0.7664558891740291,fraction,Totals,"Reduction, territorial excluding compute",1-J_A_ex_compute/R_A_ex_compute
+pc_R_A,7.1202582448907705,tCO2e/person,Totals,"Per resident, territorial excl. compute — reference",R_A_ex_compute/c_pop
+pc_J_A,1.6628943806543035,tCO2e/person,Totals,"Per resident, territorial excl. compute — project",J_A_ex_compute/c_pop
+c_ref_heat_per_gwh,322.0916705882353,tCO2e/GWh useful,Attribution,Reference emissions per GWh of useful heat,R_heat/c_heat_useful_gwh
+att_heatdisp,45131.64948158768,tCO2e,Attribution,"Recovered heat displacing fossil heat (district heating, alfalfa dehydration)",c_ref_heat_per_gwh*c_dh_useful_gwh-J_heat_dh+(R_dry-J_dry)-J_dry_other
+att_food,54015.779,tCO2e,Attribution,Food substitution by local production supplied with recovered heat (incl. its electricity),(R_veg-J_veg)+(R_sea-J_sea)+(R_bread-J_bread)
+att_compute,-112.05791999999929,tCO2e,Attribution,"Compute architecture, direct (network electricity)",R_compute-J_compute
+att_elec,3899.4245584000005,tCO2e,Attribution,Household electricity procurement,R_elec-J_elec
+att_prog,49166.01331666915,tCO2e,Attribution,"Programme financed by compute revenue (vehicles, biogas, renewable fuels, livestock, feed, haulage, diets, off-network heat)",(R_AB-J_AB)-att_heatdisp-att_food-att_compute-att_elec
+att_heatdisp_share,0.2967219566119728,fraction,Attribution,Heat displacement share of the A+B reduction,att_heatdisp/(R_AB-J_AB)
+att_food_share,0.3551314391763746,fraction,Attribution,Food substitution share,att_food/(R_AB-J_AB)
+att_prog_share,0.32324623269273806,fraction,Attribution,Programme share,att_prog/(R_AB-J_AB)
+c_heatdisp_kg_mwh_it,80.55057506258849,kgCO2e/MWh IT,Attribution,Fossil heat displaced per MWh of IT energy,att_heatdisp/c_it_gwh
+c_heatdisp_vs_compute,3.4720075458012287,ratio,Attribution,Heat displaced ÷ compute's own operational emissions,att_heatdisp/J_compute

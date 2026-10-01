@@ -1,0 +1,12 @@
+node,residents,it_MW,area_km2,lat,lon,zone,it_GWh,recoverable_heat_GWh
+Cella,2702,11.8,124.68,40.45,-1.283333,Fuente de Cella,103.36800000000001,90.96384
+Villarquemado,901,3.93,56.43,40.51768,-1.26768,Fuente de Cella,34.4268,30.295584
+Santa Eulalia del Campo,1004,4.38,80.97,40.5667,-1.3167,Fuente de Cella,38.3688,33.764544
+Torremocha–Torrelacárcel–Alba (shared node),432,3.1,139.01,40.5905,-1.2971,Fuente de Cella,27.156,23.89728
+Singra (prototype),76,1.02,36.72,40.655641,-1.311867,Fuente de Cella,8.9352,7.862976
+Villafranca del Campo,290,1.27,66.55,40.694167,-1.346111,Fuente de Cella,11.1252,9.790175999999999
+Monreal del Campo,2578,11.26,89.05,40.789444,-1.353611,Ojos de Monreal,98.63759999999999,86.801088
+Torrijo del Campo,501,2.2,44.04,40.825,-1.337778,Ojos de Monreal,19.272000000000002,16.95936
+Caminreal,617,2.7,44.39,40.838611,-1.320833,Ojos de Caminreal–Jiloca,23.652,20.813760000000002
+Fuentes Claras,428,1.9,36.91,40.863611,-1.323611,Ojos de Caminreal–Jiloca,16.644,14.646719999999998
+Calamocha,4655,20.4,316.63,40.916667,-1.3,Ojos de Caminreal–Jiloca,178.70399999999998,157.25951999999998

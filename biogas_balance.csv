@@ -1,0 +1,19 @@
+metric,value,unit
+Pig slurry routed to digester,1.0,fraction
+Cattle manure routed (housed/collectable share),0.5,fraction of total cattle manure
+Managed-manure storage CH4 avoided,0.9,fraction
+Biomethane-chain methane leakage,0.03,fraction of gross biogas CH4
+Managed-manure + biomethane-chain residual methane intensity,0.057794941264657354,fraction of gross biogas CH4
+Wet manure transported,135749.94130738574,t/yr
+Average one-way manure haul,20.0,km
+Slurry/manure transport emissions,84.41777726645525,tCO2e/yr
+Reference manure methane,16728.74372831499,tCO2e/yr
+Project manure methane,3774.0295958706047,tCO2e/yr
+Manure methane reduction,0.7743985049228352,fraction
+Biomethane produced,30.3048795347087,GWh/yr
+Biomethane to cooking,9.996666666666666,GWh/yr
+Biomethane to farm machinery,6.50673002105779,GWh/yr
+Biomethane to off-network heating,13.801482846984243,GWh/yr
+Renewable heating oil/diesel to off-network heating,7.981018162016685,GWh/yr
+Renewable diesel to farm machinery,15.182370049134843,GWh/yr
+Predefined five-sector directly addressable energy-service reduction,0.9588301073203995,fraction

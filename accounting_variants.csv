@@ -1,0 +1,6 @@
+case,R_AB,J_AB,reduction
+"Integrated programme screen: market-based, campus with the same procurement and PUE",218197.3453659292,66096.53692927238,0.6970790968220775
+"Location-based, campus with the same own generation and PUE",239074.81449169933,109395.95162747323,0.5424195900347695
+"Market-based, excluding food substitution",138521.1873659292,40436.157929272376,0.7080868371243972
+"Unmatched: campus on the residual grid mix, PUE 1.15",371548.6088859292,66096.53692927238,0.8221052768103219
+"Unmatched: campus on the residual grid mix, PUE 1.45",414915.0239259292,66096.53692927238,0.8406986175051787
